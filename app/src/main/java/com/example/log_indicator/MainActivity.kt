@@ -19,16 +19,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 
 
 class MainActivity : ComponentActivity() {
@@ -45,8 +48,8 @@ fun MyContent(context: Context) {
 
     // Delaracja zmiennej  val licznik
     // Inicjacja  wart. zerową
+    val context = LocalContext.current
     val licznik = remember { mutableStateOf(0) }
-    ///////////////////////////////////////////////////////
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -112,7 +115,7 @@ fun MyContent(context: Context) {
 //
 //   /////////////////////////////////////////////
         OutlinedButton(
-            onClick = { logged(login, password, context) },
+            onClick = { logged(login, password,context) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
@@ -155,7 +158,6 @@ fun MyContent(context: Context) {
                 backgroundColor = Color.LightGray
 
             )
-
 
             //   Spacja
 
@@ -209,13 +211,14 @@ fun logged(login: String, password: String, context: Context) {
     } else {
         Toast.makeText(context, "Logowanie nie popwiodl się", Toast.LENGTH_SHORT).show()
     }
+
+
 }
 
-//@Preview
-//@Composable
-//fun ComposablePreview() {
-//    MyContent(applicationContext)
-//}
-
+@Preview
+@Composable
+fun ComposablePreview(){
+    MyContent(context = LocalContext.current)
+}
 
 
