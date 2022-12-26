@@ -25,11 +25,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 
 
 class MainActivity : ComponentActivity() {
@@ -80,8 +79,8 @@ fun MyContent(context: Context) {
             onValueChange = { login = it },
             label = { Text(text = "enter your  login") },
             leadingIcon = {
-                 Icon(Icons.Default.Person, contentDescription ="person" )
-                          },
+                Icon(Icons.Default.Person, contentDescription = "person")
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 12.dp, top = 10.dp)
@@ -97,9 +96,11 @@ fun MyContent(context: Context) {
                 .fillMaxWidth()
                 .padding(bottom = 12.dp, top = 10.dp),
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next
+            )
         )
-
 
 
 /////////////////stary loging //////////////////////////////////////////////////////////////////////////////
@@ -111,16 +112,18 @@ fun MyContent(context: Context) {
 //
 //   /////////////////////////////////////////////
         OutlinedButton(
-            onClick = { logget(login,password,context) },
+            onClick = { logged(login, password, context) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Blue,
-                contentColor = Color.White)
+                contentColor = Color.White
+            )
 
         ) {
-            Text(text = "Login",
+            Text(
+                text = "Login",
                 textAlign = TextAlign.Center
             )
         }
@@ -200,32 +203,10 @@ fun MyContent(context: Context) {
 }
 
 
-// Creating a composable
-// function to create a button
-@Composable
-fun CreateButton(text: String, onClick: () -> Unit) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 10.dp, top = 10.dp),
-            enabled = true,
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Blue,
-            contentColor = Color.White
-
-        )
-    ) {
-        Text(text = text, color = Color.White)
-    }
-}
-
-
-fun logget(login: String, password: String, context: Context) {
-    if (login == "Mirek"&& password=="123") {
+fun logged(login: String, password: String, context: Context) {
+    if (login == "Mirek" && password == "123") {
         Toast.makeText(context, "Logowanie powiodło się", Toast.LENGTH_SHORT).show()
-    }else
-    {
+    } else {
         Toast.makeText(context, "Logowanie nie popwiodl się", Toast.LENGTH_SHORT).show()
     }
 }
