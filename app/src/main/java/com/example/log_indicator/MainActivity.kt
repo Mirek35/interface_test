@@ -122,7 +122,7 @@ fun MyContent(context: Context, viewmodel: SomeViewModel = viewModel()) {
 //
 //   /////////////////////////////////////////////
         OutlinedButton(
-            onClick = { logged(login, password,context, viewmodel) },
+            onClick = { logged(login, password, context, viewmodel) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
@@ -169,12 +169,22 @@ fun MyContent(context: Context, viewmodel: SomeViewModel = viewModel()) {
             horizontalArrangement = Arrangement.Center
 
         ) {
-            Text(text = licznik.value.toString(), color = Color.White, fontSize = 20.sp)
+            val countedNumber = countNumber(deviceState.loginState)
+            Text(text = countedNumber, color = Color.White, fontSize = 20.sp)
             Text(text = "/3", color = Color.White, fontSize = 20.sp)
             Spacer(modifier = Modifier.width(20.dp))
             Text(text = "Checking connection to server", color = Color.White, fontSize = 20.sp)
         }
 
+    }
+}
+
+fun countNumber(deviceState: LoginState): String {
+    return when (deviceState) {
+        LoginState.NONE -> "0"
+        LoginState.FIRST -> "1"
+        LoginState.SECOND -> "2"
+        LoginState.THIRD -> "3"
     }
 }
 
@@ -216,7 +226,7 @@ fun logged(login: String, password: String, context: Context, viewmodel: SomeVie
 
 @Preview
 @Composable
-fun ComposablePreview(){
+fun ComposablePreview() {
     MyContent(context = LocalContext.current)
 }
 

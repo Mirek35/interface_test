@@ -4,5 +4,5 @@ enum class LoginState {
     NONE,
     FIRST,
     SECOND,
-    THIRD
+    THIRD,
 }
