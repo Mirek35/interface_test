@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,20 +32,24 @@ import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.log_indicator.viewmodel.LoginState
+import com.example.log_indicator.viewmodel.SomeViewModel
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModel: SomeViewModel by viewModels()
+
         setContent {
-            MyContent(applicationContext)
+            MyContent(applicationContext, viewModel)
         }
     }
 }
 
 @Composable
-fun MyContent(context: Context) {
+fun MyContent(context: Context, viewmodel: SomeViewModel = viewModel()) {
 
     // Delaracja zmiennej  val licznik
     // Inicjacja  wart. zerową
@@ -52,6 +57,8 @@ fun MyContent(context: Context) {
     val licznik = remember { mutableStateOf(0) }
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val deviceState by viewmodel.uiState.collectAsState()
 
     //////////////////////////////////////////////////////////
 
@@ -115,7 +122,7 @@ fun MyContent(context: Context) {
 //
 //   /////////////////////////////////////////////
         OutlinedButton(
-            onClick = { logged(login, password,context) },
+            onClick = { logged(login, password, context, viewmodel) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
@@ -127,7 +134,7 @@ fun MyContent(context: Context) {
         ) {
             Text(
                 text = "Login",
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
 
@@ -147,40 +154,7 @@ fun MyContent(context: Context) {
                 .padding(bottom = 15.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
-        Row() {
-
-            //Paski postępu
-            LinearProgressIndicator(
-                progress = 0.0f,
-                modifier = Modifier
-                    .height(8.dp)
-                    .width(60.dp),
-                backgroundColor = Color.LightGray
-
-            )
-
-            //   Spacja
-
-            Spacer(modifier = Modifier.width(20.dp))
-            //drugi pasek
-            LinearProgressIndicator(
-                progress = 0.0f,
-                modifier = Modifier
-                    .height(8.dp)
-                    .width(60.dp),
-                backgroundColor = Color.LightGray
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            //trzeci pasek
-            LinearProgressIndicator(
-                progress = 0.0f,
-                modifier = Modifier
-                    .height(8.dp)
-                    .width(60.dp),
-                backgroundColor = Color.LightGray
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-        }
+        ProgressBars(deviceState.loginState)
         Spacer(modifier = Modifier.height(50.dp))
 
         // Displaying the mCounter value as Text
@@ -195,7 +169,8 @@ fun MyContent(context: Context) {
             horizontalArrangement = Arrangement.Center
 
         ) {
-            Text(text = licznik.value.toString(), color = Color.White, fontSize = 20.sp)
+            val countedNumber = countNumber(deviceState.loginState)
+            Text(text = countedNumber, color = Color.White, fontSize = 20.sp)
             Text(text = "/3", color = Color.White, fontSize = 20.sp)
             Spacer(modifier = Modifier.width(20.dp))
             Text(text = "Checking connection to server", color = Color.White, fontSize = 20.sp)
@@ -204,8 +179,42 @@ fun MyContent(context: Context) {
     }
 }
 
+fun countNumber(deviceState: LoginState): String {
+    return when (deviceState) {
+        LoginState.NONE -> "0"
+        LoginState.FIRST -> "1"
+        LoginState.SECOND -> "2"
+        LoginState.THIRD -> "3"
+    }
+}
 
-fun logged(login: String, password: String, context: Context) {
+@Composable
+private fun ProgressBars(loginState: LoginState) {
+    val defaultColor = Color.LightGray
+    Row {
+        ProgressLine(if (loginState == LoginState.FIRST) Color.Red else defaultColor)
+        Spacer(modifier = Modifier.width(20.dp))
+        ProgressLine(if (loginState == LoginState.SECOND) Color.Green else defaultColor)
+        Spacer(modifier = Modifier.width(20.dp))
+        ProgressLine(if (loginState == LoginState.THIRD) Color.Blue else defaultColor)
+        Spacer(modifier = Modifier.width(20.dp))
+    }
+}
+
+@Composable
+private fun ProgressLine(color: Color) {
+    LinearProgressIndicator(
+        progress = 0.0f,
+        modifier = Modifier
+            .height(8.dp)
+            .width(60.dp),
+        backgroundColor = color
+    )
+}
+
+
+fun logged(login: String, password: String, context: Context, viewmodel: SomeViewModel) {
+    viewmodel.loginAttempt()
     if (login == "Mirek" && password == "123") {
         Toast.makeText(context, "Logowanie powiodło się", Toast.LENGTH_SHORT).show()
     } else {
@@ -217,7 +226,7 @@ fun logged(login: String, password: String, context: Context) {
 
 @Preview
 @Composable
-fun ComposablePreview(){
+fun ComposablePreview() {
     MyContent(context = LocalContext.current)
 }
 
